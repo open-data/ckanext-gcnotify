@@ -7,33 +7,21 @@ CKAN Extentsion for GC Notify itegration
 
 ## Requirements
 
-**TODO:** For example, you might want to mention here which versions of CKAN this
-extension works with.
-
-If your extension works across different versions you can add the following table:
-
 Compatibility with core CKAN versions:
 
 | CKAN version    | Compatible?   |
 | --------------- | ------------- |
-| 2.6 and earlier | not tested    |
-| 2.7             | not tested    |
-| 2.8             | not tested    |
-| 2.9             | not tested    |
+| 2.6 and earlier | No    |
+| 2.7             | No    |
+| 2.8             | No    |
+| 2.9             | Yes    |
 
-Suggested values:
-
-* "yes"
-* "not tested" - I can't think of a reason why it wouldn't work
-* "not yet" - there is an intention to get it working
-* "no"
-
+| Python version    | Compatible?   |
+| --------------- | ------------- |
+| 3.5 and earlier | No    |
+| 3.6 and later             | Yes    |
 
 ## Installation
-
-**TODO:** Add any additional install steps to the list below.
-   For example installing any non-Python dependencies or adding any required
-   config settings.
 
 To install ckanext-gcnotify:
 
@@ -49,24 +37,26 @@ To install ckanext-gcnotify:
 	pip install -r requirements.txt
 
 3. Add `gcnotify` to the `ckan.plugins` setting in your CKAN
-   config file (by default the config file is located at
-   `/etc/ckan/default/ckan.ini`).
+   config file
 
-4. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu:
+4. Add `ckanext.gcnotify.api_key` setting in your CKAN config file with the value of your GC Notify API key
 
-     sudo service apache2 reload
+5. Add `ckanext.gcnotify.base_url` setting in your CKAN config file with the value of your GC Notify base URI
 
+6. Restart CKAN
 
 ## Config settings
 
-None at present
-
-**TODO:** Document any optional config settings here. For example:
-
-	# The minimum number of hours to wait before re-checking a resource
-	# (optional, default: 24).
-	ckanext.gcnotify.some_setting = some_default_value
-
+```
+# GC Notify API key
+# (required, default: None).
+ckanext.gcnotify.api_key = my_api_key
+```
+```
+# GC Notify base URI
+# (required, default: None).
+ckanext.gcnotify.base_url = my_base_uri
+```
 
 ## Developer installation
 
@@ -78,13 +68,11 @@ do:
     python setup.py develop
     pip install -r dev-requirements.txt
 
-
 ## Tests
 
 To run the tests, do:
 
     pytest --ckan-ini=test.ini
-
 
 ## Releasing a new version of ckanext-gcnotify
 
@@ -120,4 +108,4 @@ If ckanext-gcnotify should be available on PyPI you can follow these steps to pu
 
 ## License
 
-[AGPL](https://www.gnu.org/licenses/agpl-3.0.en.html)
+[MIT](https://raw.githubusercontent.com/open-data/ckanext-gcnotify/master/LICENSE)
