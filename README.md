@@ -39,7 +39,7 @@ To install ckanext-gcnotify:
 3. Add `gcnotify` to the `ckan.plugins` setting in your CKAN
    config file
 
-4. Add `ckanext.gcnotify.api_key` setting in your CKAN config file with the value of your GC Notify API key
+4. Add `ckanext.gcnotify.secret_key` setting in your CKAN config file with the value of your GC Notify secret key (last 5 hex groups of your API key)
 
 5. Add `ckanext.gcnotify.base_url` setting in your CKAN config file with the value of your GC Notify base URI
 
@@ -50,9 +50,9 @@ To install ckanext-gcnotify:
 ## Config settings
 
 ```
-# GC Notify API key
+# GC Notify Secret key
 # (required, default: None).
-ckanext.gcnotify.api_key = my_api_key
+ckanext.gcnotify.secret_key = my_secret_key
 ```
 ```
 # GC Notify base URI
