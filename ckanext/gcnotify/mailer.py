@@ -1,58 +1,54 @@
 import ckan.lib.mailer as mailer
-from ckan.common import _, config
-from ckan.lib.base import render_jinja2
-
 from ckanext.gcnotify.notification import GcnotifyAPI
+from ckan.common import _, config
+import json
 
 
 class MailerOverride:
 
   gcnotify_api = GcnotifyAPI()
-  
+  templateIDs = config.get('ckanext.gcnotify.template_ids') # type: dict|None
+
+  def __init__(self):
+    # type: () -> None
+
+    if (self.templateIDs is None) or not len(self.templateIDs):
+      self.templateIDs = {}
+    else:
+      self.templateIDs = json.loads(self.templateIDs)
+
+
+  def get_template_id(self,
+                      action):
+    # type: (str) -> str|None
+
+    if action not in self.templateIDs:
+      raise mailer.MailerException(_("No GC Notify template ID is set!"))
+
+    return self.templateIDs.get(action)
+
+
   def send_reset_link(self,
                       user):
     # type: (ckan.model.User) -> None
 
-    mailer.create_reset_key(user)
-    body = mailer.get_reset_link_body(user)
-    extra_vars = {
-        'site_title': config.get('ckan.site_title')
-    }
-    subject = render_jinja2('emails/reset_password_subject.txt', extra_vars)
-
-    # Make sure we only use the first line
-    subject = subject.split('\n')[0]
-
     if (user.email is None) or not len(user.email):
-          raise mailer.MailerException(_("No recipient email address available!"))
+        raise mailer.MailerException(_("No recipient email address available!"))
 
+    # use user ID, use user fullname if it is set
+    userName = user.name
+    if user.fullname is not None:
+      userName = user.fullname
+
+    # generate a user reset key, then get it
+    mailer.create_reset_key(user)
+    resetLink = mailer.get_reset_link(user)
+    
     self.gcnotify_api.send_email(
       recipient=user.email,
-      subject=subject,
-      body=body
-    )
-
-  def send_invite(self,
-                  user,
-                  group_dict=None,
-                  role=None):
-    # type: (ckan.model.User, dict|None, str|None) -> None
-
-    mailer.create_reset_key(user)
-    body = mailer.get_invite_body(user, group_dict, role)
-    extra_vars = {
-        'site_title': config.get('ckan.site_title')
-    }
-    subject = render_jinja2('emails/invite_user_subject.txt', extra_vars)
-
-    # Make sure we only use the first line
-    subject = subject.split('\n')[0]
-
-    if (user.email is None) or not len(user.email):
-          raise mailer.MailerException(_("No recipient email address available!"))
-
-    self.gcnotify_api.send_email(
-      recipient=user.email,
-      subject=subject,
-      body=body
+      templateID=self.get_template_id(self.send_reset_link.__name__),
+      personalisation={
+        "user_name": userName,
+        "reset_link": resetLink
+      }
     )

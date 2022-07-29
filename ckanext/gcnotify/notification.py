@@ -11,22 +11,12 @@ log = logging.getLogger(__name__)
 
 class GcnotifyAPI:
 
-  secretKey = config.get('ckanext.gcnotify.secret_key')
-  baseURI = config.get('ckanext.gcnotify.base_url')
-  templateID = config.get('ckanext.gcnotify.template_id')
-  hostURL = config.get('ckan.site_url')
+  secretKey = config.get('ckanext.gcnotify.secret_key') # type: str
+  baseURI = config.get('ckanext.gcnotify.base_url') # type: str
 
-  def get_host_domain(self):
-    # type: () -> str|None
-
-    if (self.hostURL is None) or not len(self.hostURL):
-      raise MailerException(_("No Host URL is set!"))
-
-    return self.hostURL.replace("https://","").replace("http//","").replace("/","")
 
   def get_request_headers(self,
-                          headers,
-                          contentLength="0"):
+                          headers):
     # type: (dict, str) -> dict|None
 
     if (self.secretKey is None) or not len(self.secretKey):
@@ -34,14 +24,12 @@ class GcnotifyAPI:
 
     headers['Authorization'] = 'ApiKey-v1 {}'.format(self.secretKey)
     headers['Content-Type'] = 'application/json'
-    headers['User-agent'] = 'CKAN {}'.format(ckan_version())
-    headers['Host'] = self.get_host_domain()
-    headers['Content-Length'] = contentLength
+    headers['User-agent'] = 'CKAN/{}'.format(ckan_version())
 
     return headers
 
 
-  def get_base_uri(self,
+  def get_api_endpoint(self,
                   endpoint):
     # type: (str) -> str|None
 
@@ -53,67 +41,56 @@ class GcnotifyAPI:
 
     return self.baseURI + endpoint
 
-  def get_template_id(self):
-
-    if (self.templateID is None) or not len(self.templateID):
-      raise MailerException(_("No GC Notify template ID is set!"))
-
-    return self.templateID
-
 
   def get_request_body(self,
                       recipient,
-                      subject,
-                      body):
-    # type: (str, str, str) -> dict|None
+                      templateID,
+                      personalisation):
+    # type: (str, str, dict) -> dict|None
 
     return {
       'email_address': recipient,
-      'template_id': self.get_template_id(),
-      'personalisation': self.get_personalisation(subject,body)
-    }
-
-
-  def get_personalisation(self,
-                          subject,
-                          body):
-    # type: (str, str) -> dict|None
-
-    if (body is None) or not len(body):
-      raise MailerException(_("No email body is set!"))
-
-    return {
-      'subject': subject,
-      'rendered_body': body
+      'template_id': templateID,
+      'personalisation': personalisation
     }
 
 
   def send_email(self,
                 recipient,
-                subject,
-                body,
+                templateID,
+                personalisation={},
                 headers={},
                 attachments=None):
-    # type: (str, str, str, dict, dict|None) -> None
+    # type: (str, str, dict, dict, dict|None) -> None
 
     method = 'POST'
-    bodyContent = self.get_request_body(recipient,subject,body)
-    bodyContent = json.dumps(bodyContent)
-    headerContent = self.get_request_headers(headers,str(len(bodyContent)))
-    endpoint = self.get_base_uri('/v2/notifications/email')
+    bodyContent = self.get_request_body(recipient,templateID,personalisation)
+    headerContent = self.get_request_headers(headers)
+    endpoint = self.get_api_endpoint('/v2/notifications/email')
+
+    log.info("    ")
+    log.info("DEBUG - Request Data")
+    log.info(bodyContent)
+    log.info("    ")
+
+    log.info("    ")
+    log.info("DEBUG - Request Headers")
+    log.info(headerContent)
+    log.info("    ")
+
+    log.info("    ")
+    log.info("DEBUG - Request Endpoint")
+    log.info(endpoint)
+    log.info("    ")
 
     try:
-
-      log.info("    ")
-      log.info("DEBUG - Request Headers")
-      log.info(headerContent)
-      log.info("    ")
 
       response = requests.request(
         method=method,
         url=endpoint,
         json=bodyContent,
-        headers=headerContent
+        headers=headerContent,
+        verify=False
       )
 
       response.raise_for_status()
@@ -121,9 +98,20 @@ class GcnotifyAPI:
     except requests.exceptions.HTTPError as error:
 
       log.info("    ")
+      log.info("DEBUG - Response Data")
+      log.info(response.json())
+      log.info("    ")
+
+      log.info("    ")
       log.info("DEBUG - Response Headers")
       log.info(response.headers)
       log.info("    ")
+
+      log.info("    ")
+      log.info("DEBUG - Response code")
+      log.info(response.status_code)
+      log.info("    ")
+
 
       log.error("API {} request on {} failed with '{}'".format(
                     method,

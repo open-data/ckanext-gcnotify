@@ -7,12 +7,11 @@ from ckanext.gcnotify.mailer import MailerOverride
 class GcnotifyPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
 
+    mailer_override = MailerOverride()
+
     # IConfigurer
 
     def update_config(self, config):
         # type: (object) -> None
 
-        mailer_override = MailerOverride()
-
-        mailer.send_reset_link = mailer_override.send_reset_link
-        mailer.send_invite = mailer_override.send_invite
+        mailer.send_reset_link = self.mailer_override.send_reset_link

@@ -18,8 +18,8 @@ Compatibility with core CKAN versions:
 
 | Python version    | Compatible?   |
 | --------------- | ------------- |
-| 3.5 and earlier | Yes    |
-| 3.6 and later             | Yes    |
+| 2.9 and earlier | Yes    |
+| 3.0 and later             | No    |
 
 ## Installation
 
@@ -43,7 +43,7 @@ To install ckanext-gcnotify:
 
 5. Add `ckanext.gcnotify.base_url` setting in your CKAN config file with the value of your GC Notify base URI
 
-6. Add `ckanext.gcnotify.template_id` setting in your CKAN config file with the value of your GC Notify template ID which should be a blank template with the variable `((rendered_body))` for the content and the variable `((subject))` for the subject
+6. Add `ckanext.gcnotify.template_ids` setting in your CKAN config file with the values of your GC Notify template IDs in a dict (key is email action and value is template ID)
 
 7. Restart CKAN
 
@@ -60,9 +60,12 @@ ckanext.gcnotify.secret_key = my_secret_key
 ckanext.gcnotify.base_url = my_base_uri
 ```
 ```
-# GC Notify template ID
+# GC Notify template IDs
 # (required, default: None).
-ckanext.gcnotify.template_id = my_template_id
+ckanext.gcnotify.template_ids = {
+  "email_action": "template_id_for_action",
+  "another_email_action": "template_id_for_another_action"
+}
 ```
 
 ## License
