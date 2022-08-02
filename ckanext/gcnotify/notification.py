@@ -1,6 +1,5 @@
 import requests
 import logging
-import json
 
 from ckan.lib.mailer import MailerException
 from ckan.lib.helpers import ckan_version
@@ -68,21 +67,6 @@ class GcnotifyAPI:
     headerContent = self.get_request_headers(headers)
     endpoint = self.get_api_endpoint('/v2/notifications/email')
 
-    log.info("    ")
-    log.info("DEBUG - Request Data")
-    log.info(bodyContent)
-    log.info("    ")
-
-    log.info("    ")
-    log.info("DEBUG - Request Headers")
-    log.info(headerContent)
-    log.info("    ")
-
-    log.info("    ")
-    log.info("DEBUG - Request Endpoint")
-    log.info(endpoint)
-    log.info("    ")
-
     try:
 
       response = requests.request(
@@ -96,22 +80,6 @@ class GcnotifyAPI:
       response.raise_for_status()
 
     except requests.exceptions.HTTPError as error:
-
-      log.info("    ")
-      log.info("DEBUG - Response Data")
-      log.info(response.json())
-      log.info("    ")
-
-      log.info("    ")
-      log.info("DEBUG - Response Headers")
-      log.info(response.headers)
-      log.info("    ")
-
-      log.info("    ")
-      log.info("DEBUG - Response code")
-      log.info(response.status_code)
-      log.info("    ")
-
 
       log.error("API {} request on {} failed with '{}'".format(
                     method,

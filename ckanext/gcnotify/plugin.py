@@ -15,3 +15,5 @@ class GcnotifyPlugin(plugins.SingletonPlugin):
         # type: (object) -> None
 
         mailer.send_reset_link = self.mailer_override.send_reset_link
+        mailer.send_invite = self.mailer_override.send_invite
+        mailer.notify_ckan_user_create = self.mailer_override.notify_ckan_user_create
