@@ -11,15 +11,15 @@ Compatibility with core CKAN versions:
 
 | CKAN version    | Compatible?   |
 | --------------- | ------------- |
-| 2.6 and earlier | No    |
-| 2.7             | No    |
+| 2.6 and earlier | Not tested    |
+| 2.7             | Not tested    |
 | 2.8             | Yes    |
-| 2.9             | No    |
+| 2.9             | Not tested    |
 
 | Python version    | Compatible?   |
 | --------------- | ------------- |
 | 2.9 and earlier | Yes    |
-| 3.0 and later             | No    |
+| 3.0 and later             | Not tested    |
 
 ## Installation
 
