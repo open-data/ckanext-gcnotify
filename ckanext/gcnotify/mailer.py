@@ -40,7 +40,7 @@ def send_reset_link(user):
     
     send_email(
       recipient=user.email,
-      template_id=get_template_id(send_reset_link.__name__),
+      template_id=get_template_id("send_reset_link"),
       personalisation={
         "user_name": user_name,
         "reset_link": reset_link
@@ -80,7 +80,7 @@ def send_invite(user,
     
     send_email(
       recipient=user.email,
-      template_id=get_template_id(send_invite.__name__),
+      template_id=get_template_id("send_invite"),
       personalisation={
         "user_name": user_name,
         "group_type": group_type,
@@ -112,9 +112,13 @@ def notify_ckan_user_create(email,
 
     send_email(
       recipient=recipient_address,
-      template_id=get_template_id(notify_ckan_user_create.__name__),
+      template_id=get_template_id("new_user_admin_note"),
       personalisation={
-        "user_name": recipient_name
+        "admin_name": recipient_name,
+        "user_name": username,
+        "email_address": email,
+        "phone_number": phoneno or "N/A",
+        "department": dept
       }
     )
 
@@ -123,7 +127,7 @@ def notify_ckan_user_create(email,
   ###
   send_email(
     recipient=email,
-    template_id=get_template_id(notify_ckan_user_create.__name__),
+    template_id=get_template_id("new_user_note"),
     personalisation={
       "user_name": fullname or email
     }

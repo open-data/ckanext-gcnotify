@@ -43,7 +43,7 @@ To install ckanext-gcnotify:
 
 5. Add `ckanext.gcnotify.base_url` setting in your CKAN config file with the value of your GC Notify base URI
 
-6. Add `ckanext.gcnotify.template_ids` setting in your CKAN config file with the values of your GC Notify template IDs in a dict (key is email action and value is template ID)
+6. Add `ckanext.gcnotify.template_ids` setting in your CKAN config file with the values of your GC Notify template IDs in a dict (key is email action and value is template ID, ___see Config Settings for all valid key values___)
 
 7. Restart CKAN
 
@@ -63,8 +63,10 @@ ckanext.gcnotify.base_url = my_base_uri
 # GC Notify template IDs
 # (required, default: None).
 ckanext.gcnotify.template_ids = {
-  "email_action": "template_id_for_action",
-  "another_email_action": "template_id_for_another_action"
+  "send_reset_link": "template_id",
+  "send_invite": "template_id",
+  "new_user_admin_note": "template_id",
+  "new_user_note": "template_id"
 }
 ```
 
