@@ -186,7 +186,7 @@ def send_email(recipient,
       url=endpoint,
       json=body_content,
       headers=header_content,
-      verify=False
+      verify=True
     )
 
     response.raise_for_status()
