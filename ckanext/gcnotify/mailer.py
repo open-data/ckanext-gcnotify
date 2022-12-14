@@ -162,13 +162,11 @@ def get_request_body(recipient,
                     personalisation):
     # type: (str, str, dict) -> dict|None
 
-    ref, sep, tail = config.get('ckan.site_url', '').replace('https://', '').replace('http://', '').partition(':') # type: str
-
     return {
       'email_address': recipient,
       'template_id': template_id,
       'personalisation': personalisation,
-      'reference': ref
+      'reference': config.get('ckan.site_url', '')
     }
 
 
