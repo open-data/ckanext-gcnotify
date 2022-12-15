@@ -1,7 +1,6 @@
-from ckan.lib.helpers import ckan_version
-from ckan.lib.helpers import roles_translated
+from ckan.lib.helpers import ckan_version, roles_translated
 
-from ckan.common import _, config
+from ckan.common import _, config, request
 import ckan.lib.mailer as mailer
 
 import requests
@@ -165,7 +164,8 @@ def get_request_body(recipient,
     return {
       'email_address': recipient,
       'template_id': template_id,
-      'personalisation': personalisation
+      'personalisation': personalisation,
+      'reference': request.url
     }
 
 
