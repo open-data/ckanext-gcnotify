@@ -186,7 +186,7 @@ def send_email(recipient,
       url=endpoint,
       json=body_content,
       headers=header_content,
-      verify=False #TODO: set to True when SSL tunnel is available
+      verify=True
     )
 
     response.raise_for_status()
