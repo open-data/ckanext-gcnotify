@@ -1,6 +1,6 @@
 from ckan.lib.helpers import ckan_version, roles_translated
 
-from ckan.common import _, config, request
+from ckan.common import _, config, request, asbool
 import ckan.lib.mailer as mailer
 
 import requests
@@ -186,7 +186,7 @@ def send_email(recipient,
       url=endpoint,
       json=body_content,
       headers=header_content,
-      verify=True
+      verify=asbool(config.get('ckanext.gcnotify.verify_ssl', True))
     )
 
     response.raise_for_status()
