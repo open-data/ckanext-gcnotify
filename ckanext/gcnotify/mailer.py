@@ -6,6 +6,9 @@ import ckan.lib.mailer as mailer
 import requests
 import json
 
+import traceback
+import logging
+
 
 def get_template_id(action):
     # type: (str) -> str|None
@@ -189,4 +192,7 @@ def send_email(recipient,
       verify=False
     )
 
-    response.raise_for_status()
+    try:
+      response.raise_for_status()
+    except Exception as e:
+      logging.error(traceback.format_exc())
