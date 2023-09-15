@@ -1,7 +1,7 @@
 name: Tests
-#TODO: 
+#TODO:
 #push, pull_request
-on: []
+on: [workflow_dispatch]
 jobs:
   test:
     runs-on: ubuntu-latest
