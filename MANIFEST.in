@@ -1,5 +1,4 @@
-include README.rst
+include README.md
 include LICENSE
 include requirements.txt
-recursive-include ckanext/gcnotify *.html *.json *.js *.less *.css *.mo *.yml
-recursive-include ckanext/gcnotify/migration *.ini *.py *.mako
+recursive-include ckanext/gcnotify *.html *.json *.js *.less *.css *.mo

@@ -1,2 +1,1 @@
-pytest-runner==5.2
-git+https://github.com/open-data/notifications-python-client#egg=notifications-python-client
+requests==2.11.1

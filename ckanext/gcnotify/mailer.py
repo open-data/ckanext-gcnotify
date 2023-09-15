@@ -1,18 +1,14 @@
-from ckan.lib.helpers import roles_translated
-from ckan.model import User
+from ckan.lib.helpers import ckan_version, roles_translated
 
-from notifications_python_client.notifications import NotificationsAPIClient
-from notifications_python_client.utils import DOCUMENT_UPLOAD_SIZE_LIMIT
-
-import base64
-import json
-from typing import Any, Iterable, Optional, cast
-
-from ckan.common import _, config
+from ckan.common import _, config, request
 import ckan.lib.mailer as mailer
 
+import requests
+import json
 
-def get_template_id(action: str) -> str:
+
+def get_template_id(action):
+    # type: (str) -> str|None
 
     template_ids = config.get('ckanext.gcnotify.template_ids') # type: dict|None
     if not template_ids:
@@ -26,7 +22,8 @@ def get_template_id(action: str) -> str:
     return template_ids.get(action)
 
 
-def send_reset_link(user: User) -> None:
+def send_reset_link(user):
+    # type: (ckan.model.User) -> None
 
     if not user.email:
       raise mailer.MailerException(_("No recipient email address available!"))
@@ -39,7 +36,7 @@ def send_reset_link(user: User) -> None:
     # generate a user reset key, then get it
     mailer.create_reset_key(user)
     reset_link = mailer.get_reset_link(user)
-    
+
     send_email(
       recipient=user.email,
       template_id=get_template_id("send_reset_link"),
@@ -50,9 +47,10 @@ def send_reset_link(user: User) -> None:
     )
 
 
-def send_invite(user: User,
-                group_dict: Optional[dict] = None,
-                role: Optional[str] = None) -> None:
+def send_invite(user,
+                group_dict=None,
+                role=None):
+    # type: (ckan.model.User,dict|None,str|None) -> None
 
     if not user.email:
       raise mailer.MailerException(_("No recipient email address available!"))
@@ -78,7 +76,7 @@ def send_invite(user: User,
     role_name = "N/A"
     if role:
       role_name = roles_translated().get(role, _(role))
-    
+
     send_email(
       recipient=user.email,
       template_id=get_template_id("send_invite"),
@@ -92,11 +90,12 @@ def send_invite(user: User,
     )
 
 
-def notify_ckan_user_create(email: str,
-                            fullname: str,
-                            username: str,
-                            phoneno: str,
-                            dept: str) -> None:
+def notify_ckan_user_create(email,
+                            fullname,
+                            username,
+                            phoneno,
+                            dept):
+  # type: (str, str, str, str, str) -> None
 
   ###
   # send email to canada.notification_new_user_email config if it exists
@@ -134,45 +133,60 @@ def notify_ckan_user_create(email: str,
   )
 
 
-def get_attachments(attachments: dict,
-                    personalisation: dict) -> dict:
-    
-    if attachments is None:
-        return personalisation
+def get_request_headers(headers):
+    # type: (dict) -> dict|None
 
-    for index, attachment in attachments:
-        if len(attachment) == 3:
-            name, _file, media_type = cast(mailer.AttachmentWithType, attachment)
-        else:
-            name, _file = cast(mailer.AttachmentWithoutType, attachment)
-            media_type = None
+    secret_key = config.get('ckanext.gcnotify.secret_key') # type: str
 
-        contents = _file.read()
-        sendingMethod = 'attach'
+    headers['Authorization'] = 'ApiKey-v1 {}'.format(secret_key)
+    headers['Content-Type'] = 'application/json'
+    headers['User-agent'] = 'CKAN/{}'.format(ckan_version())
 
-        if len(contents) > DOCUMENT_UPLOAD_SIZE_LIMIT:
-            sendingMethod = 'link'
-
-        personalisation[f"file_{index}"] = {
-            'file': base64.b64encode(contents).decode('ascii'),
-            'filename': name,
-            'sending_method': sendingMethod
-        }
-    return personalisation
+    return headers
 
 
-def send_email(recipient: str,
-              template_id: str,
-              personalisation: Optional[dict] = {},
-              headers: Optional[dict] = {},
-              attachments: Optional[Iterable[mailer.Attachment]] = None) -> None:
+def get_api_endpoint(endpoint):
+    # type: (str) -> str|None
 
-    personalisation = get_attachments(attachments, personalisation)
+    base_uri = config.get('ckanext.gcnotify.base_url') # type: str
 
-    notificactions_client = NotificationsAPIClient(config.get("ckanext.gcnotify.api_key"))   
+    if not endpoint:
+      raise mailer.MailerException(_("No GC Notify API endpoint is set!"))
 
-    notificactions_client.send_email_notification(
-        email_address=recipient,
-        template_id=template_id,
-        personalisation=personalisation
+    return base_uri + endpoint
+
+
+def get_request_body(recipient,
+                    template_id,
+                    personalisation):
+    # type: (str, str, dict) -> dict|None
+
+    return {
+      'email_address': recipient,
+      'template_id': template_id,
+      'personalisation': personalisation,
+      'reference': request.url
+    }
+
+
+def send_email(recipient,
+              template_id,
+              personalisation={},
+              headers={},
+              attachments=None):
+    # type: (str, str, dict, dict, dict|None) -> None
+
+    method = 'POST'
+    body_content = get_request_body(recipient,template_id,personalisation)
+    header_content = get_request_headers(headers)
+    endpoint = get_api_endpoint('/v2/notifications/email')
+
+    response = requests.request(
+      method=method,
+      url=endpoint,
+      json=body_content,
+      headers=header_content,
+      verify=True
     )
+
+    response.raise_for_status()
