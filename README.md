@@ -13,8 +13,8 @@ Compatibility with core CKAN versions:
 | --------------- | ------------- |
 | 2.6 and earlier | Not tested    |
 | 2.7             | Not tested    |
-| 2.8             | Yes    |
-| 2.9             | Not tested    |
+| 2.8             | No    |
+| 2.9             | Yes    |
 
 | Python version    | Compatible?   |
 | --------------- | ------------- |
@@ -31,7 +31,7 @@ To install ckanext-gcnotify:
 
 2. Clone the source and install it on the virtualenv
 
-    git clone --branch ckan-v2.8 --single-branch https://github.com/open-data/ckanext-gcnotify.git
+    git clone --branch master --single-branch https://github.com/open-data/ckanext-gcnotify.git
     cd ckanext-gcnotify
     pip install -e .
     pip install -r requirements.txt
@@ -72,4 +72,4 @@ ckanext.gcnotify.template_ids = {
 
 ## License
 
-[MIT](https://raw.githubusercontent.com/open-data/ckanext-gcnotify/ckan-v2.8/LICENSE)
+[MIT](https://raw.githubusercontent.com/open-data/ckanext-gcnotify/master/LICENSE)

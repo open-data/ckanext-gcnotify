@@ -39,7 +39,7 @@ def send_reset_link(user):
     # generate a user reset key, then get it
     mailer.create_reset_key(user)
     reset_link = mailer.get_reset_link(user)
-    
+
     send_email(
       recipient=user.email,
       template_id=get_template_id("send_reset_link"),
@@ -79,7 +79,7 @@ def send_invite(user,
     role_name = "N/A"
     if role:
       role_name = roles_translated().get(role, _(role))
-    
+
     send_email(
       recipient=user.email,
       template_id=get_template_id("send_invite"),
