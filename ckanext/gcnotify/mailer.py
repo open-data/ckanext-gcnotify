@@ -50,6 +50,21 @@ def send_reset_link(user):
     )
 
 
+def send_username_recovery(email, username_list):
+    # type: (str, list[str]) -> None
+
+    if not email:
+      raise mailer.MailerException(_("No recipient email address available!"))
+
+    send_email(
+      recipient=email,
+      template_id=get_template_id("send_username_recovery"),
+      personalisation={
+        "username_list": '\n'.join(username_list),
+      }
+    )
+
+
 def send_invite(user,
                 group_dict=None,
                 role=None):
