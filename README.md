@@ -19,7 +19,7 @@ Compatibility with core CKAN versions:
 | Python version    | Compatible?   |
 | --------------- | ------------- |
 | 2.9 and earlier | Yes    |
-| 3.0 and later             | Not tested    |
+| 3.0 and later             | Yes    |
 
 ## Installation
 
@@ -63,11 +63,11 @@ ckanext.gcnotify.base_url = my_base_uri
 # GC Notify template IDs
 # (required, default: None).
 ckanext.gcnotify.template_ids = {
-  "send_reset_link": "template_id",
-  "send_invite": "template_id",
-  "new_user_admin_note": "template_id",
-  "new_user_note": "template_id"
-}
+  "send_reset_link":"template_id",
+  "send_invite":"template_id",
+  "new_user_admin_note":"template_id",
+  "new_user_note":"template_id",
+  "send_username_recovery":"template_id"}
 ```
 
 ## License
