@@ -1,23 +1,26 @@
 import ckan.plugins as plugins
 
-import ckan.lib.mailer as mailer
-import ckanext.gcnotify.mailer as mailer_overrider
+from ckanext.gcnotify import mailer
 from ckan.common import config
 
 
 class GcnotifyPlugin(plugins.SingletonPlugin):
-    plugins.implements(plugins.IConfigurer)
+    plugins.implements(plugins.IMailer)
 
     assert config["ckanext.gcnotify.secret_key"]
     assert config["ckanext.gcnotify.base_url"]
     assert config["ckanext.gcnotify.template_ids"]
 
-    # IConfigurer
+    # IMailer
 
-    def update_config(self, config):
-        # type: (object) -> None
+    def send_reset_link(self, user):
+        mailer.send_reset_link(user)
 
-        mailer.send_reset_link = mailer_overrider.send_reset_link
-        mailer.send_invite = mailer_overrider.send_invite
-        mailer.notify_ckan_user_create = mailer_overrider.notify_ckan_user_create
-        mailer.send_username_recovery = mailer_overrider.send_username_recovery
+    def send_invite(self, user, group_dict, role):
+        mailer.send_invite(user, group_dict, role)
+
+    def notify_ckan_user_create(self, email, fullname, username, phoneno, dept):
+        mailer.notify_ckan_user_create(email, fullname, username, phoneno, dept)
+
+    def send_username_recovery(self, email, username_list):
+        mailer.send_username_recovery(email, username_list)
