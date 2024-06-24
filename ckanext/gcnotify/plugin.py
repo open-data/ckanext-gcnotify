@@ -24,8 +24,10 @@ class GcnotifyPlugin(plugins.SingletonPlugin):
     def notify_recipient(self, notification_sent,
             recipient_name, recipient_email, subject,
             body, body_html, headers, attachments):
-        return True
+        return True  # stop processing any other notifications
 
-    def notify_about_topic(self, topic, details):
+    def notify_about_topic(self, notification_sent, topic, details):
         if topic in MAPPING:
             MAPPING.get(topic)(**details)
+            return True  # stop processing any other notifications
+        return notification_sent
