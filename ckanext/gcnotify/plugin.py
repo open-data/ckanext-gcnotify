@@ -1,23 +1,33 @@
 import ckan.plugins as plugins
 
-import ckan.lib.mailer as mailer
-import ckanext.gcnotify.mailer as mailer_overrider
+from ckanext.gcnotify import mailer
 from ckan.common import config
 
 
+MAPPING = {
+    'request_password_reset': mailer.send_reset_link,
+    'user_invited': mailer.send_invite,
+    'user_created': mailer.notify_ckan_user_create,
+    'request_username_recovery': mailer.send_username_recovery,
+}
+
+
 class GcnotifyPlugin(plugins.SingletonPlugin):
-    plugins.implements(plugins.IConfigurer)
+    plugins.implements(plugins.INotifier)
 
     assert config["ckanext.gcnotify.secret_key"]
     assert config["ckanext.gcnotify.base_url"]
     assert config["ckanext.gcnotify.template_ids"]
 
-    # IConfigurer
+    # INotifier
 
-    def update_config(self, config):
-        # type: (object) -> None
+    def notify_recipient(self, notification_sent,
+            recipient_name, recipient_email, subject,
+            body, body_html, headers, attachments):
+        return True  # stop processing any other notifications
 
-        mailer.send_reset_link = mailer_overrider.send_reset_link
-        mailer.send_invite = mailer_overrider.send_invite
-        mailer.notify_ckan_user_create = mailer_overrider.notify_ckan_user_create
-        mailer.send_username_recovery = mailer_overrider.send_username_recovery
+    def notify_about_topic(self, notification_sent, topic, details):
+        if topic in MAPPING:
+            MAPPING.get(topic)(**details)
+            return True  # stop processing any other notifications
+        return notification_sent
