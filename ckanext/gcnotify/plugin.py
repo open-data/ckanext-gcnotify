@@ -20,3 +20,5 @@ class GcnotifyPlugin(plugins.SingletonPlugin):
         mailer.send_reset_link = mailer_overrider.send_reset_link
         mailer.send_invite = mailer_overrider.send_invite
         mailer.notify_ckan_user_create = mailer_overrider.notify_ckan_user_create
+        mailer.notify_lockout = mailer_overrider.notify_lockout
+
