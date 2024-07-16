@@ -31,7 +31,7 @@ def send_reset_link(user):
     # use user ID, use user fullname if it is set
     user_name = user.name
     if user.fullname:
-      user_name = user.fullname
+      user_name = "%s (%s)" % (user.fullname, user.name)
 
     # generate a user reset key, then get it
     mailer.create_reset_key(user)
@@ -47,6 +47,21 @@ def send_reset_link(user):
     )
 
 
+def send_username_recovery(email, username_list):
+    # type: (str, list[str]) -> None
+
+    if not email:
+      raise mailer.MailerException(_("No recipient email address available!"))
+
+    send_email(
+      recipient=email,
+      template_id=get_template_id("send_username_recovery"),
+      personalisation={
+        "username_list": '\n'.join(username_list),
+      }
+    )
+
+
 def send_invite(user,
                 group_dict=None,
                 role=None):
@@ -58,7 +73,7 @@ def send_invite(user,
     # use user ID, use user fullname if it is set
     user_name = user.name
     if user.fullname:
-      user_name = user.fullname
+      user_name = "%s (%s)" % (user.fullname, user.name)
 
     # generate a user reset key, then get it
     mailer.create_reset_key(user)
@@ -109,12 +124,17 @@ def notify_ckan_user_create(email,
 
     recipient_address = config['canada.notification_new_user_email']
 
+    # use user ID, use user fullname if it is set
+    user_name = username
+    if fullname:
+      user_name = "%s (%s)" % (fullname, username)
+
     send_email(
       recipient=recipient_address,
       template_id=get_template_id("new_user_admin_note"),
       personalisation={
         "admin_name": recipient_name,
-        "user_name": username,
+        "user_name": user_name,
         "email_address": email,
         "phone_number": phoneno or "N/A",
         "department": dept
@@ -128,7 +148,7 @@ def notify_ckan_user_create(email,
     recipient=email,
     template_id=get_template_id("new_user_note"),
     personalisation={
-      "user_name": fullname or email
+      "user_name": user_name
     }
   )
 
