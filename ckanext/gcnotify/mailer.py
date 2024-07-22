@@ -153,6 +153,21 @@ def notify_ckan_user_create(email,
   )
 
 
+def notify_lockout(user, lockout_timeout):
+   # type: (ckan.model.User,int) -> None
+
+    if not user.email:
+      raise mailer.MailerException(_("No recipient email address available!"))
+
+    send_email(
+      recipient=user.email,
+      template_id=get_template_id("notify_lockout"),
+      personalisation={
+        "timeout": int(lockout_timeout / 60)
+      }
+    )
+
+
 def get_request_headers(headers):
     # type: (dict) -> dict|None
 
@@ -177,23 +192,23 @@ def get_api_endpoint(endpoint):
 
 
 def get_request_body(recipient,
-                    template_id,
-                    personalisation):
+                     template_id,
+                     personalisation):
     # type: (str, str, dict) -> dict|None
 
     return {
       'email_address': recipient,
       'template_id': template_id,
       'personalisation': personalisation,
-      'reference': request.url
+      'reference': request.url if request else config.get('ckan.site_id', 'N/A'),
     }
 
 
 def send_email(recipient,
-              template_id,
-              personalisation={},
-              headers={},
-              attachments=None):
+               template_id,
+               personalisation={},
+               headers={},
+               attachments=None):
     # type: (str, str, dict, dict, dict|None) -> None
 
     method = 'POST'
