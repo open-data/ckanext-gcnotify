@@ -2,7 +2,7 @@ import ckan.plugins as plugins
 
 import ckan.lib.mailer as mailer
 import ckanext.gcnotify.mailer as mailer_overrider
-from ckan.common import config
+from ckan.common import config, CKANConfig
 
 
 class GcnotifyPlugin(plugins.SingletonPlugin):
@@ -14,11 +14,12 @@ class GcnotifyPlugin(plugins.SingletonPlugin):
 
     # IConfigurer
 
-    def update_config(self, config):
-        # type: (object) -> None
-
+    def update_config(self, config: 'CKANConfig'):
         mailer.send_reset_link = mailer_overrider.send_reset_link
         mailer.send_invite = mailer_overrider.send_invite
-        mailer.notify_ckan_user_create = mailer_overrider.notify_ckan_user_create
-        mailer.send_username_recovery = mailer_overrider.send_username_recovery
-        mailer.notify_lockout = mailer_overrider.notify_lockout
+        setattr(mailer, 'notify_ckan_user_create',
+                mailer_overrider.notify_ckan_user_create)
+        setattr(mailer, 'send_username_recovery',
+                mailer_overrider.send_username_recovery)
+        setattr(mailer, 'notify_lockout',
+                mailer_overrider.notify_lockout)

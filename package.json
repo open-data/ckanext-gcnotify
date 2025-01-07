@@ -1,0 +1,21 @@
+{
+  "name": "ckanext-gcnotify",
+  "version": "1.0.0",
+  "description": "CKAN GC Notify Plugin",
+  "dependencies": {},
+  "devDependencies": {
+    "pyright": "1.1.386"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/open-data/ckanext-gcnotify.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/open-data/ckanext-gcnotify/issues"
+  },
+  "homepage": "https://github.com/open-data/ckanext-gcnotify#readme"
+}
