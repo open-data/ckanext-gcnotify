@@ -32,6 +32,7 @@ jobs:
             pip install -e 'git+https://github.com/ckan/ckan@master#egg=ckan' -r 'https://raw.githubusercontent.com/ckan/ckan/master/requirements.txt' -r 'https://raw.githubusercontent.com/ckan/ckan/master/dev-requirements.txt'
             pip install -e /home/runner/work/app/src/ckanext-gcnotify/. -r /home/runner/work/app/src/ckanext-gcnotify/requirements.txt -r /home/runner/work/app/src/ckanext-gcnotify/dev-requirements.txt
             pip install --upgrade setuptools==44.1.0
+            pip install -r requirements.txt
             find /home/runner/work/app -name '*.pyc' -delete
       - name: Install node deps
         if: steps.pydepends.outcome == 'success'
